@@ -2,16 +2,23 @@ pipeline {
     agent any
 
     stages {
-        stage('Install dependencies') {
+
+        stage('Checkout') {
             steps {
-                sh 'pip install -r requirements.txt'
+                checkout scm
             }
         }
 
-        stage('Run tests') {
+        stage('Build and Run Tests') {
             steps {
-                sh 'pytest'
+                sh 'docker compose up --build --abort-on-container-exit'
             }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker compose down'
         }
     }
 }
